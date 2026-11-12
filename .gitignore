@@ -1,0 +1,11 @@
+# Compiled Java files
+*.class
+# Passwords and environment files
+.env
+.env.*
+# Logs
+*.log
+# VS Code settings
+.vscode/
+# MySQL driver
+lib/*.jar
