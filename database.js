@@ -106,12 +106,45 @@ function updateBook(id, newStatus, oldStatus, callback) {
         callback(err, this ? this.changes : 0);
     });
 }
+    //create the reviews table
+    db.run(`
+        CREATE TABLE IF NOT EXISTS reviews (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            book_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            review TEXT NOT NULL
+        )
+    `);
+
+ //save a book review
+function addReview(bookId, userId, review, callback) {
+    const sql = `
+        INSERT INTO reviews (book_id, user_id, review)
+        VALUES (?, ?, ?)
+    `;
+
+    db.run(sql, [bookId, userId, review], callback);
+}
+
+//get reviews for a book
+function getReviews(bookId, callback) {
+    const sql = `
+        SELECT reviews.review, users.username
+        FROM reviews
+        JOIN users ON reviews.user_id = users.id
+        WHERE reviews.book_id = ?
+    `;
+
+    db.all(sql, [bookId], callback);
+}
 
 //export the functions so server.js can use them
 module.exports = {
     getBooks,
     updateBook,
     registerUser,
-    getUser
+    getUser,
+    addReview,
+    getReviews
 };
 

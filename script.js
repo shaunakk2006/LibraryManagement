@@ -5,9 +5,13 @@ document.addEventListener("DOMContentLoaded", () => {
     //search automatically when the user types
     document.getElementById("search")
         .addEventListener("input", loadBooks);
+
+    //log out when the button is clicked
+    document.getElementById("logoutButton")
+        .addEventListener("click", logout);
 });
 
-//reetrieve books from the Java backend
+//retrieve books from the backend
 async function loadBooks() {
     const search = document.getElementById("search").value;
     const bookList = document.getElementById("bookList");
@@ -56,8 +60,67 @@ async function loadBooks() {
                 updateBook(book.id, book.available);
             });
 
-            card.append(title, author, status, button);
+            //create a review input
+            const reviewInput = document.createElement("input");
+            reviewInput.placeholder = "Write a review";
+            reviewInput.maxLength = 500;
+
+            //create a submit review button
+            const reviewButton = document.createElement("button");
+            reviewButton.textContent = "Submit Review";
+
+            //create an area to display reviews
+            const reviewList = document.createElement("div");
+
+            //submit a review
+            reviewButton.addEventListener("click", async () => {
+                const review = reviewInput.value.trim();
+
+                if (review === "") {
+                    alert("Please write a review.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("/api/reviews", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            bookId: book.id,
+                            review: review
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Unable to save review");
+                    }
+
+                    reviewInput.value = "";
+                    await loadReviews(book.id, reviewList);
+
+                } catch (error) {
+                    alert("Unable to save review.");
+                    console.error(error);
+                }
+            });
+
+            //add everything to the book card
+            card.append(
+                title,
+                author,
+                status,
+                button,
+                reviewInput,
+                reviewButton,
+                reviewList
+            );
+
             bookList.appendChild(card);
+
+            //display existing reviews
+            loadReviews(book.id, reviewList);
         });
 
     } catch (error) {
@@ -65,7 +128,8 @@ async function loadBooks() {
         console.error(error);
     }
 }
- //borrow or return a book
+
+//borrow or return a book
 async function updateBook(id, available) {
     const action = available ? "borrow" : "return";
 
@@ -91,3 +155,51 @@ async function updateBook(id, available) {
     }
 }
 
+//display reviews for a book
+async function loadReviews(bookId, reviewList) {
+    try {
+        const response = await fetch("/api/reviews/" + bookId);
+
+        if (!response.ok) {
+            throw new Error("Unable to load reviews");
+        }
+
+        const reviews = await response.json();
+
+        //clear previous reviews
+        reviewList.replaceChildren();
+
+        reviews.forEach(review => {
+            const paragraph = document.createElement("p");
+
+            //safely display the username and review
+            paragraph.textContent =
+                review.username + ": " + review.review;
+
+            reviewList.appendChild(paragraph);
+        });
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+//log out the user
+async function logout() {
+    try {
+        const response = await fetch("/api/logout", {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            throw new Error("Unable to log out");
+        }
+
+        //return to the login page
+        window.location.href = "/login.html";
+
+    } catch (error) {
+        alert("Unable to log out.");
+        console.error(error);
+    }
+}
