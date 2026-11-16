@@ -353,6 +353,19 @@ app.get("/api/reviews/:bookId", requireLogin, (req, res) => {
 
         res.send("Search: " + search);
     });
+
+    //insecure because private user information is exposed
+        app.get("/api/users", (req, res) => {
+            database.getAllUsers((err, users) => {
+                if (err) {                  //if cant retrieve users from database, return 500 error
+                    return res.status(500).json({
+                        error: "Database error"
+                    });
+                }
+
+                res.json(users);
+            });
+        });
 //start the website
 app.listen(PORT, () => {
     console.log(`Website running at http://localhost:${PORT}`);

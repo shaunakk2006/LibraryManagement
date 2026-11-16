@@ -11,7 +11,7 @@ const db = new sqlite3.Database("./library.db", (err) => {
 
  //create the users table
 db.run(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS users ( 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL
@@ -137,6 +137,10 @@ function getReviews(bookId, callback) {
     db.all(sql, [bookId], callback);
 }
 
+    //insecure because it gets private user information
+    function getAllUsers(callback) {
+        db.all("SELECT id, username, password_hash FROM users", callback);
+    }
 //export the functions so server.js can use them
 module.exports = {
     getBooks,
@@ -144,6 +148,7 @@ module.exports = {
     registerUser,
     getUser,
     addReview,
-    getReviews
+    getReviews,
+    getAllUsers
 };
 
