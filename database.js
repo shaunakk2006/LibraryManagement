@@ -66,7 +66,7 @@ db.run(`
                 ["To Kill a Mockingbird", "Harper Lee"],
                 ["The Catcher in the Rye", "J.D. Salinger"],
                 ["Lord of the Flies", "William Golding"],
-                ["The Great Gatsby", "F. Scott Fitzgerald"]
+                ["The Great Gatsby", "F. Scott Fitzgerald"],
                 ["Mobey Dick", "Herman Melville"],
                 ["Pride and Prejudice", "Jane Austen"],
                 ["The Hobbit", "J.R.R. Tolkien"],
@@ -82,16 +82,15 @@ db.run(`
     });
 });
 
-//get all books or search for a book
-function getBooks(search, callback) {
-    const sql = `
-        SELECT * FROM books
-        WHERE title LIKE ? OR author LIKE ?
-    `;
 
-    //parameters prevent SQL injection
-    db.all(sql, [`%${search}%`, `%${search}%`], callback);
-}
+//get all books or search for a book
+//insecure because user input is added directly to SQL
+    function getBooks(search, callback) {
+        const sql = "SELECT * FROM books WHERE title LIKE '%" +
+            search + "%' OR author LIKE '%" + search + "%'";
+
+        db.all(sql, callback);
+    }
 
 //change whether a book is available
 function updateBook(id, newStatus, oldStatus, callback) {
