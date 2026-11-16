@@ -9,7 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
     //log out when the button is clicked
     document.getElementById("logoutButton")
         .addEventListener("click", logout);
+    
+    //insecure because URL input is displayed as HTML
+    const message = document.createElement("p");
+    message.innerHTML = new URLSearchParams(window.location.search).get("message") || "";
+    document.body.prepend(message);
 });
+
 
 //retrieve books from the backend
 async function loadBooks() {
