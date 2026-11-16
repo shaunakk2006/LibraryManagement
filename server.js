@@ -347,6 +347,12 @@ app.get("/api/reviews/:bookId", requireLogin, (req, res) => {
     });
 });
 
+    //insecure because user input is displayed as HTML
+    app.get("/search-example", (req, res) => {  //creates a webpage at /search-example that displays the search query directly in the HTML
+        const search = req.query.search || "";
+
+        res.send("Search: " + search);
+    });
 //start the website
 app.listen(PORT, () => {
     console.log(`Website running at http://localhost:${PORT}`);
