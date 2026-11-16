@@ -1,14 +1,13 @@
-
-// Load books when the website opens.
+//load books when the website opens
 document.addEventListener("DOMContentLoaded", () => {
     loadBooks();
 
-    // Search automatically when the user types.
+    //search automatically when the user types
     document.getElementById("search")
         .addEventListener("input", loadBooks);
 });
 
-// Retrieve books from the Java backend.
+//reetrieve books from the Java backend
 async function loadBooks() {
     const search = document.getElementById("search").value;
     const bookList = document.getElementById("bookList");
@@ -24,7 +23,7 @@ async function loadBooks() {
 
         const books = await response.json();
 
-        // Clear the previous results.
+        //clear the previous results
         bookList.replaceChildren();
 
         if (books.length === 0) {
@@ -32,7 +31,7 @@ async function loadBooks() {
             return;
         }
 
-        // Display each book.
+        //display each book
         books.forEach(book => {
             const card = document.createElement("div");
             card.className = "book";
@@ -66,8 +65,7 @@ async function loadBooks() {
         console.error(error);
     }
 }
-
-// Borrow or return a book.
+ //borrow or return a book
 async function updateBook(id, available) {
     const action = available ? "borrow" : "return";
 
@@ -75,16 +73,16 @@ async function updateBook(id, available) {
         const response = await fetch("/api/" + action, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/json"
             },
-            body: new URLSearchParams({ id: id })
+            body: JSON.stringify({ id: id })
         });
 
         if (!response.ok) {
             throw new Error("Unable to update book");
         }
 
-        // Refresh the book list.
+        //refresh the book list
         await loadBooks();
 
     } catch (error) {
@@ -92,3 +90,4 @@ async function updateBook(id, available) {
         console.error(error);
     }
 }
+

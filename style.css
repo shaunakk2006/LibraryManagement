@@ -1,7 +1,6 @@
 
 /* Library Management System styling */
-
-/* General website styling */
+/* general website styling */
 body {
     font-family: Arial, sans-serif;
     background-color: #f1f6f2;
@@ -9,7 +8,7 @@ body {
     margin: 0;
 }
 
-/* Website header */
+/* website header */
 header {
     background-color: #104F55;
     color: white;
@@ -27,21 +26,21 @@ header p {
     margin-top: 10px;
 }
 
-/* Main content */
+/* main content */
 main {
     max-width: 850px;
     margin: 35px auto;
     padding: 20px;
 }
 
-/* Section headings */
+/* section headings */
 h2 {
     color: #104F55;
     border-bottom: 3px solid #32746D;
     padding-bottom: 12px;
 }
 
-/* Search bar */
+/* search bar */
 #search {
     width: 100%;
     box-sizing: border-box;
@@ -59,7 +58,7 @@ h2 {
     outline-offset: 2px;
 }
 
-/* Individual book cards */
+/* individual book sections */
 .book {
     background-color: white;
     border-left: 5px solid #32746D;
@@ -70,25 +69,25 @@ h2 {
     transition: transform 0.2s ease;
 }
 
-/* Hover effect for books */
+/* hover effect for books */
 .book:hover {
     transform: translateY(-2px);
 }
 
-/* Book titles */
+/* book titles */
 .book h3 {
     color: #104F55;
     margin-top: 0;
     margin-bottom: 12px;
 }
 
-/* Book information */
+/* book information */
 .book p {
     color: #01200F;
     line-height: 1.5;
 }
 
-/* Borrow and return buttons */
+/* borrow and return buttons */
 button {
     background-color: #32746D;
     color: white;
@@ -101,18 +100,12 @@ button {
     transition: background-color 0.2s ease;
 }
 
-/* Button hover effect */
+/* button hover effect */
 button:hover {
     background-color: #104F55;
 }
 
-/* Keyboard accessibility */
-button:focus-visible {
-    outline: 3px solid #01200F;
-    outline-offset: 3px;
-}
-
-/* Smaller screens */
+/* smaller screens */
 @media (max-width: 600px) {
     main {
         margin: 15px auto;

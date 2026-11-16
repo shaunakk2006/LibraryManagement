@@ -10,6 +10,8 @@ const db = new sqlite3.Database("./library.db", (err) => {
 });
 
 //create the books table
+
+ //create the books table
 db.run(`
     CREATE TABLE IF NOT EXISTS books (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,7 +19,43 @@ db.run(`
         author TEXT NOT NULL,
         available INTEGER NOT NULL DEFAULT 1
     )
-`);
+`, (err) => {
+    if (err) {
+        console.error("Error creating books table.");
+        return;
+    }
+
+    //check if books already exist
+    db.get("SELECT COUNT(*) AS total FROM books", (err, row) => {
+        if (err) {
+            console.error("Error checking books.");
+            return;
+        }
+
+        //only add books if the table is empty
+        if (row.total === 0) {
+            const sql = "INSERT INTO books (title, author) VALUES (?, ?)";
+
+            const books = [
+                ["1984", "George Orwell"],
+                ["To Kill a Mockingbird", "Harper Lee"],
+                ["The Catcher in the Rye", "J.D. Salinger"],
+                ["Lord of the Flies", "William Golding"],
+                ["The Great Gatsby", "F. Scott Fitzgerald"]
+                ["Mobey Dick", "Herman Melville"],
+                ["Pride and Prejudice", "Jane Austen"],
+                ["The Hobbit", "J.R.R. Tolkien"],
+                ["Alice Adventures in Wonderland", "Lewis Carroll"],
+                ["The Odyssey", "Homer"]
+            ];
+
+            //add each book to the database
+            books.forEach((book) => {
+                db.run(sql, book);
+            });
+        }
+    });
+});
 
 //get all books or search for a book
 function getBooks(search, callback) {
