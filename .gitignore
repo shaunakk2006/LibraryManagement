@@ -1,11 +1,19 @@
-# Compiled Java files
+#what files to not upload to git
+#Compiled Java files
 *.class
-# Passwords and environment files
+#Passwords and environment files
 .env
 .env.*
-# Logs
+#Logs
 *.log
-# VS Code settings
+#VS Code settings
 .vscode/
-# MySQL driver
+#MySQL driver
 lib/*.jar
+#Node.js dependencies
+node_modules/
+# Local database
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
