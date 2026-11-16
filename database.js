@@ -9,7 +9,32 @@ const db = new sqlite3.Database("./library.db", (err) => {
     }
 });
 
-//create the books table
+ //create the users table
+db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL
+    )
+`);
+
+ //register a new user
+function registerUser(username, passwordHash, callback) {
+    const sql = `
+        INSERT INTO users (username, password_hash)
+        VALUES (?, ?)
+    `;
+
+    //save the username and hashed password
+    db.run(sql, [username, passwordHash], callback);
+}
+
+//find a user by their username
+function getUser(username, callback) {
+    const sql = "SELECT * FROM users WHERE username = ?";
+
+    db.get(sql, [username], callback);
+}
 
  //create the books table
 db.run(`
@@ -85,6 +110,8 @@ function updateBook(id, newStatus, oldStatus, callback) {
 //export the functions so server.js can use them
 module.exports = {
     getBooks,
-    updateBook
+    updateBook,
+    registerUser,
+    getUser
 };
 
