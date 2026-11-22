@@ -9,12 +9,12 @@ document.addEventListener("DOMContentLoaded", () => {
     //log out when the button is clicked
     document.getElementById("logoutButton")
         .addEventListener("click", logout);
-});
 
-    //secure because URL input is displayed as plain text, gets rid of hello message at the top of the page
+    //secure because URL input is displayed as plain text
     const message = document.createElement("p");
     message.textContent = new URLSearchParams(window.location.search).get("message") || "";
     document.body.prepend(message);
+});
 
 //retrieve books from the backend
 async function loadBooks() {
@@ -87,10 +87,14 @@ async function loadBooks() {
                 }
 
                 try {
+                    //get the CSRF token
+                    const token = await getCsrfToken();
+
                     const response = await fetch("/api/reviews", {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            "X-CSRF-Token": token
                         },
                         body: JSON.stringify({
                             bookId: book.id,
@@ -139,10 +143,14 @@ async function updateBook(id, available) {
     const action = available ? "borrow" : "return";
 
     try {
+        //get the CSRF token
+        const token = await getCsrfToken();
+
         const response = await fetch("/api/" + action, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRF-Token": token
             },
             body: JSON.stringify({ id: id })
         });
@@ -178,7 +186,7 @@ async function loadReviews(bookId, reviewList) {
             const paragraph = document.createElement("p");
 
             //secure because reviews are displayed as text instead of HTML
-            paragraph.textContent = 
+            paragraph.textContent =
                 review.username + ": " + review.review;
 
             reviewList.appendChild(paragraph);
@@ -192,8 +200,14 @@ async function loadReviews(bookId, reviewList) {
 //log out the user
 async function logout() {
     try {
+        //get the CSRF token
+        const token = await getCsrfToken();
+
         const response = await fetch("/api/logout", {
-            method: "POST"
+            method: "POST",
+            headers: {
+                "X-CSRF-Token": token
+            }
         });
 
         if (!response.ok) {
@@ -207,4 +221,16 @@ async function logout() {
         alert("Unable to log out.");
         console.error(error);
     }
+}
+
+//get the CSRF token
+async function getCsrfToken() {
+    const res = await fetch("/api/csrf-token");
+
+    if (!res.ok) {
+        throw new Error("Unable to get CSRF token");
+    }
+
+    const data = await res.json();
+    return data.csrfToken;
 }

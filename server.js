@@ -49,6 +49,23 @@ function requireLogin(req, res, next) {
     next();
 }
 
+///create a CSRF token (rule) for the session
+app.get("/api/csrf-token", requireLogin, (req, res) => {
+    if (!req.session.csrfToken) {
+        req.session.csrfToken = crypto.randomBytes(32).toString("hex");
+    }
+
+    res.json({ csrfToken: req.session.csrfToken });
+});
+//check that the CSRF token matches
+function checkCsrf(req, res, next) {
+    if (req.headers["x-csrf-token"] !== req.session.csrfToken ||
+        !req.session.csrfToken) {
+        return res.sendStatus(403);
+    }
+
+    next();
+}
 //display registration page when website opens
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "register.html"));
