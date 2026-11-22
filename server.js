@@ -141,7 +141,7 @@ app.get("/api/books", requireLogin, (req, res) => {
 });
 
 //borrow a book
-app.post("/api/borrow", requireLogin, (req, res) => {
+app.post("/api/borrow", requireLogin, checkCsrf, (req, res) => {
     changeBookStatus(req, res, 0, 1);
 });
 
@@ -252,10 +252,13 @@ app.post("/api/login", (req, res) => {
         }
 
         if (!user) {
-            return res.status(401).json({
-                error: "Invalid username or password."
-            });
-        }
+        //record failed login
+        console.warn("Failed login:", new Date().toISOString());
+
+        return res.status(401).json({
+            error: "Invalid username or password."
+        });
+    }
 
         //separate the saved salt and password hash
         const [salt, savedHash] = user.password_hash.split(":");
@@ -268,6 +271,8 @@ app.post("/api/login", (req, res) => {
         //compare the password hashes
         if (savedHashBuffer.length !== enteredHash.length ||
             !crypto.timingSafeEqual(savedHashBuffer, enteredHash)) {
+                //record incorrect password
+            console.warn("Failed login:", new Date().toISOString());
             return res.status(401).json({
                 error: "Invalid username or password."
             });
@@ -290,6 +295,8 @@ app.post("/api/login", (req, res) => {
                         error: "Login failed."
                     });
                 }
+                //record successful login
+                console.log("Successful login:", new Date().toISOString());
 
                 res.json({
                     message: "Login successful."
@@ -307,9 +314,10 @@ app.post("/api/logout", requireLogin, (req, res) => {
                 error: "Logout failed."
             });
         }
+        //record successful logout
+        console.log("User logged out:", new Date().toISOString());
 
         res.clearCookie("connect.sid");
-
         res.json({
             message: "Logged out."
         });
