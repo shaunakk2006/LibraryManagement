@@ -347,6 +347,13 @@ app.get("/api/reviews/:bookId", requireLogin, (req, res) => {
     });
 });
 
+    //secure because private user information is not shared
+        app.get("/api/users", (req, res) => {
+            res.status(403).json({
+                error: "Access denied."
+            });
+        });
+
 //secure because user input is displayed as plain text, stops XSS pop up
 app.get("/search-example", (req, res) => {
     const search = req.query.search || "";
