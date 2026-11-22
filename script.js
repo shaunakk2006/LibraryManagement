@@ -11,6 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
         .addEventListener("click", logout);
 });
 
+    //secure because URL input is displayed as plain text, gets rid of hello message at the top of the page
+    const message = document.createElement("p");
+    message.textContent = new URLSearchParams(window.location.search).get("message") || "";
+    document.body.prepend(message);
+
 //retrieve books from the backend
 async function loadBooks() {
     const search = document.getElementById("search").value;
