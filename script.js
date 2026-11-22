@@ -172,8 +172,8 @@ async function loadReviews(bookId, reviewList) {
         reviews.forEach(review => {
             const paragraph = document.createElement("p");
 
-            //safely display the username and review
-            paragraph.textContent =
+            //secure because reviews are displayed as text instead of HTML
+            paragraph.textContent = 
                 review.username + ": " + review.review;
 
             reviewList.appendChild(paragraph);
