@@ -83,14 +83,11 @@ db.run(`
 });
 
 //get all books or search for a book
+//secure because user input is passed as a parameter to the SQL query, preventing SQL injection
 function getBooks(search, callback) {
-    const sql = `
-        SELECT * FROM books
-        WHERE title LIKE ? OR author LIKE ?
-    `;
+    const sql = "SELECT * FROM books WHERE title LIKE ? OR author LIKE ?";
 
-    //parameters prevent SQL injection
-    db.all(sql, [`%${search}%`, `%${search}%`], callback);
+    db.all(sql, ["%" + search + "%", "%" + search + "%"], callback);
 }
 
 //change whether a book is available
