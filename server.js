@@ -347,6 +347,12 @@ app.get("/api/reviews/:bookId", requireLogin, (req, res) => {
     });
 });
 
+//secure because user input is displayed as plain text, stops XSS pop up
+app.get("/search-example", (req, res) => {
+    const search = req.query.search || "";
+    res.type("text/plain").send("Search: " + search); //display the search as plain text to prevent XSS attack
+});
+
 //start the website
 app.listen(PORT, () => {
     console.log(`Website running at http://localhost:${PORT}`);
